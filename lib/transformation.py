@@ -47,7 +47,7 @@ class AffineTnf(object):
 
         # sample transformed image
         warped_image_batch = F.grid_sample(
-            image_batch, sampling_grid, align_corners=True
+            image_batch, sampling_grid#, align_corners=True
         )
 
         return warped_image_batch

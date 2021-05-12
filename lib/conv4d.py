@@ -106,7 +106,7 @@ class Conv4d(_ConvNd):
             _quadruple(0),
             groups,
             bias,
-            padding_mode="zeros",  # This fixes TypeError: __init__() missing 1 required positional argument: 'padding_mode' in Python 3.7
+            #padding_mode="zeros",  # This fixes TypeError: __init__() missing 1 required positional argument: 'padding_mode' in Python 3.7
         )
         # weights will be sliced along one dimension during convolution loop
         # make the looping dimension to be the first one in the tensor,
