@@ -7,15 +7,9 @@ import torchvision.models as models
 import numpy as np
 import numpy.matlib
 import pickle
-from soft_argmax import SoftArgmax2D
 
 from lib.torch_util import Softmax1D
 from lib.conv4d import Conv4d
-
-class Flatten(nn.Module):
-    def forward(self, x):
-        x = x.view(x.size()[0], -1)
-        return x
 
 def featureL2Norm(feature):
     epsilon = 1e-6
@@ -198,7 +192,7 @@ def maxpool4d(corr4d_hres,k_size=4):
 
 class ImMatchNet(nn.Module):
     def __init__(self, 
-                 feature_extraction_cnn='resnet101',
+                 feature_extraction_cnn='resnet101', 
                  feature_extraction_last_layer='',
                  feature_extraction_model_file=None,
                  return_correlation=False,  
@@ -207,7 +201,7 @@ class ImMatchNet(nn.Module):
                  normalize_features=True,
                  train_fe=False,
                  use_cuda=True,
-                 relocalization_k_size=1,
+                 relocalization_k_size=0,
                  half_precision=False,
                  checkpoint=None,
                  ):
@@ -217,7 +211,7 @@ class ImMatchNet(nn.Module):
         if checkpoint is not None and checkpoint is not '':
             print('Loading checkpoint...')
             checkpoint = torch.load(checkpoint, map_location=lambda storage, loc: storage)
-            #checkpoint['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint['state_dict'].items()])
+            checkpoint['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint['state_dict'].items()])
             # override relevant parameters
             print('Using checkpoint parameters: ')
             ncons_channels=checkpoint['args'].ncons_channels
@@ -243,19 +237,6 @@ class ImMatchNet(nn.Module):
         self.NeighConsensus = NeighConsensus(use_cuda=self.use_cuda,
                                              kernel_sizes=ncons_kernel_sizes,
                                              channels=ncons_channels)
-        self.Classifier1 = nn.Sequential(
-            nn.Linear(32,64),
-            nn.ReLU(),
-            nn.Linear(64,64),
-            nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64,32),
-            nn.ReLU(),
-            nn.Linear(32,32),
-        ).to(torch.device('cuda' if torch.cuda.is_available() else "cpu"))
 
         # Load weights
         if checkpoint is not None and checkpoint is not '':
@@ -265,8 +246,6 @@ class ImMatchNet(nn.Module):
                     self.FeatureExtraction.state_dict()[name].copy_(checkpoint['state_dict']['FeatureExtraction.' + name])    
             for name, param in self.NeighConsensus.state_dict().items():
                 self.NeighConsensus.state_dict()[name].copy_(checkpoint['state_dict']['NeighConsensus.' + name])
-            for name, param in self.Classifier1.state_dict().items():
-                self.Classifier1.state_dict()[name].copy_(checkpoint['state_dict']['Classifier1.' + name])
             print('Done!')
         
         self.FeatureExtraction.eval()
@@ -295,99 +274,10 @@ class ImMatchNet(nn.Module):
         corr4d = MutualMatching(corr4d)
         corr4d = self.NeighConsensus(corr4d)            
         corr4d = MutualMatching(corr4d)
-
-
-        to_cuda = lambda x: x.cuda() if corr4d.is_cuda else x
-        batch_size, ch, fs1, fs2, fs3, fs4 = corr4d.size()
-        softarg2d = SoftArgmax2D()
-
-
-        #PROJECTING ON B FOR EACH PIXEL IN A
-        nc_B_Avec = corr4d.view(batch_size, fs1 * fs2, fs3, fs4)  # [batch_idx,k_A,i_B,j_B]
-
-        nc_B_Avec = torch.nn.functional.softmax(nc_B_Avec, dim=1)
-
         
-        a1 = softarg2d(nc_B_Avec)
-
-        
-        A_vec= feature_A.view(feature_A.size(0), feature_A.size(1), -1).type(torch.cuda.FloatTensor)
-        a2= torch.zeros(A_vec.size(0),A_vec.size(2)).type(torch.cuda.FloatTensor)
-        
-        for i in range(A_vec.size(2)):
-            t = feature_B[:, :, a1[0, i, 1].type(torch.cuda.ByteTensor).item(), a1[0, i, 0].type(torch.cuda.ByteTensor).item()]
-            u = A_vec[:,:,i]
-            #sum(a * b) / sqrt(sum(a ^ 2) * sum(b ^ 2))
-            multi = torch.sum(torch.mul(t, u), dim=1)
-            sum1 = torch.sum(torch.pow(t, 2), dim=1)
-            sum2 = torch.sum(torch.pow(u, 2), dim=1)
-            denominator = torch.sqrt(torch.mul(sum1, sum2))
-
-            a2[:, i] = 100*(multi/denominator)
-        
-
-        a1_index = torch.argsort(a2, dim=1)
-        A_index = torch.topk(a2,8,dim=1)[1].type(torch.cuda.FloatTensor)
-        
-        row = (A_index//feature_A.size(-1)).unsqueeze(-1)
-        
-        col = (A_index % feature_A.size(-1)).unsqueeze(-1)
-        
-        row_col = torch.cat((row,col),dim=-1)
-        
-
-        a1_r = torch.zeros((a1.size())).type(torch.cuda.FloatTensor)
-
-        for i in range(batch_size):
-            a1_r[i] = a1[i, a1_index[i], :]
-
-
-        a1_r = a1_r[:, :8, :]
-        a1_r = a1_r.contiguous().view(batch_size, -1).unsqueeze(1)
-        
-
-        #PROJECTING A on each pixel of B
-        nc_A_Bvec = corr4d.view(batch_size, fs1 , fs2, fs3* fs4)#.permute(0,3,1,2) # [batch_idx,k_A,i_B,j_B]
-
-        nc_A_Bvec = torch.nn.functional.softmax(nc_A_Bvec, dim=3)
-        nc_A_Bvec = nc_A_Bvec.permute(0,3,1,2)
-        
-        b1 = softarg2d(nc_A_Bvec)
-        
-        B_vec = feature_B.view(feature_B.size(0), feature_B.size(1), -1).type(torch.cuda.FloatTensor)
-        b2 = torch.zeros(B_vec.size(0),B_vec.size(2)).type(torch.cuda.FloatTensor)
-        
-
-        for i in range(B_vec.size(2)):
-            t = feature_A[:, :, b1[0, i, 1].type(torch.cuda.ByteTensor).item(), b1[0, i, 0].type(torch.cuda.ByteTensor).item()]  
-            u = B_vec[:, :, i]
-            # sum(a * b) / sqrt(sum(a ^ 2) * sum(b ^ 2))
-            multi = torch.sum(torch.mul(t, u), dim=1)
-            sum1 = torch.sum(torch.pow(t, 2), dim=1)
-            sum2 = torch.sum(torch.pow(u, 2), dim=1)
-            denominator = torch.sqrt(torch.mul(sum1, sum2))
-
-            b2[:, i] = multi/denominator
-        
-
-        b1_index = torch.argsort(b2, dim=1)
-
-        b1_r = torch.zeros((b1.size())).type(torch.cuda.FloatTensor)
-
-        for i in range(batch_size):
-            b1_r[i] = b1[i, b1_index[i], :]
-
-        b1_r = b1_r[:, :8, :]
-        
-        b1_r = b1_r.contiguous().view(batch_size, -1).unsqueeze(1)
-        a1_b1 = torch.cat((a1_r, b1_r), dim= 2 )
-        
-        classifier1 = self.Classifier1
-        
-        y_out1 = classifier1(a1_b1)
-        y_out1 = y_out1.squeeze(1)
-        
-
-        return y_out1
-
+        if self.relocalization_k_size>1:
+            delta4d=(max_i,max_j,max_k,max_l)
+            return (corr4d,delta4d)
+        else:
+            return corr4d
 
