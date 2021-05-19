@@ -168,6 +168,7 @@ def weak_loss(model, batch, normalization="softmax", alpha=30):
     b = batch["source_image"].size(0)
     # positive
     # corr4d = model({'source_image':batch['source_image'], 'target_image':batch['target_image']})
+    print("Premodel", flush=True)
     corr4d = model(batch)
 
     batch_size = corr4d.size(0)
@@ -181,19 +182,24 @@ def weak_loss(model, batch, normalization="softmax", alpha=30):
         0, 3, 1, 2
     )  #
 
+    print("Pre-norm1", flush=True)
     nc_B_Avec = normalize(nc_B_Avec)
+    print("Pre-norm2", flush=True)
     nc_A_Bvec = normalize(nc_A_Bvec)
 
     # compute matching scores
+    print("Pre-scores", flush=True)
     scores_B, _ = torch.max(nc_B_Avec, dim=1)
     scores_A, _ = torch.max(nc_A_Bvec, dim=1)
     score_pos = torch.mean(scores_A + scores_B) / 2
 
     # negative
+    print("Pre-mod2", flush=True)
     batch["source_image"] = batch["source_image"][np.roll(np.arange(b), -1), :]  # roll
     corr4d = model(batch)
     # corr4d = model({'source_image':batch['source_image'], 'target_image':batch['negative_image']})
 
+    print("Pre-view", flush=True)
     batch_size = corr4d.size(0)
     feature_size = corr4d.size(2)
     nc_B_Avec = corr4d.view(
@@ -236,7 +242,6 @@ def process_epoch(
     for batch_idx, batch in enumerate(dataloader):
         print(f"Batch index {batch_idx}", flush=True)
         if mode == "train":
-            print("Optimizing", flush=True)
             optimizer.zero_grad()
         # tnf_batch = batch_preprocessing_fn(batch)
         print("Loss FN", flush=True)
