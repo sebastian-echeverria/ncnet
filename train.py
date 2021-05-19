@@ -234,6 +234,7 @@ def process_epoch(
 ):
     epoch_loss = 0
     for batch_idx, batch in enumerate(dataloader):
+        print(f"Brach index {batch_idx}")
         if mode == "train":
             optimizer.zero_grad()
         # tnf_batch = batch_preprocessing_fn(batch)
