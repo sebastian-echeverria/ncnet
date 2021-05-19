@@ -5,3 +5,4 @@ __pycache__
 *.zip
 *.1
 __MACOSX/
+.idea/

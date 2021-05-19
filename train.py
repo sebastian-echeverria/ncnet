@@ -268,9 +268,9 @@ test_loss = np.zeros(args.num_epochs)
 print("Starting training...")
 
 model.FeatureExtraction.eval()
-print("Starting training2...")
+
 for epoch in range(1, args.num_epochs + 1):
-    print(f"Epoch {epoch}")
+    print(f"Epoch {epoch}", flush=True)
     train_loss[epoch - 1] = process_epoch(
         "train",
         epoch,
@@ -281,7 +281,7 @@ for epoch in range(1, args.num_epochs + 1):
         batch_preprocessing_fn=None,
         log_interval=1,
     )
-    print("Post train loss")
+    print("Post train loss", flush=True)
     test_loss[epoch - 1] = process_epoch(
         "test",
         epoch,
@@ -292,7 +292,7 @@ for epoch in range(1, args.num_epochs + 1):
         batch_preprocessing_fn=None,
         log_interval=1,
     )
-    print("Post test loss")
+    print("Post test loss", flush=True)
     # remember best loss
     is_best = test_loss[epoch - 1] < best_test_loss
     best_test_loss = min(test_loss[epoch - 1], best_test_loss)
@@ -309,7 +309,7 @@ for epoch in range(1, args.num_epochs + 1):
         is_best,
         checkpoint_name,
     )
-    print("Post checkpoint")
+    print("Post checkpoint", flush=True)
 
 print("Done!")
 
