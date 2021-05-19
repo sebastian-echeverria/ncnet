@@ -234,12 +234,14 @@ def process_epoch(
 ):
     epoch_loss = 0
     for batch_idx, batch in enumerate(dataloader):
-        print(f"Brach index {batch_idx}")
+        print(f"Batch index {batch_idx}", flush=True)
         if mode == "train":
+            print("Optimizing", flush=True)
             optimizer.zero_grad()
         # tnf_batch = batch_preprocessing_fn(batch)
+        print("Loss FN", flush=True)
         loss = loss_fn(model, batch)
-        print(f"Loss: {loss}, {type(loss)}")
+        print(f"Loss: {loss}, {type(loss)}", flush=True)
         loss_np = loss.data.cpu().numpy()
         epoch_loss += loss_np
         if mode == "train":
