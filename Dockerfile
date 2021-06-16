@@ -1,5 +1,8 @@
-FROM python:3.7
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
+# Set up pytho, pip, and pipenv.
+RUN apt-get update
+RUN apt-get install python3.7 pip python-dev
 RUN pip install pipenv
 
 # Installing Python deps without a venv (not needed in container).
@@ -14,4 +17,4 @@ RUN pip install -r requirements.txt
 WORKDIR /app
 COPY *.py /app/
 COPY lib lib/
-ENTRYPOINT ["python3", "train.py"]
+ENTRYPOINT ["python3.7", "train.py"]
