@@ -12,6 +12,6 @@ RUN pip install -r requirements.txt
 
 # Actual code.
 WORKDIR /app
-COPY *.py /app
+COPY *.py /app/
 COPY lib lib/
 ENTRYPOINT ["python3", "train.py"]
