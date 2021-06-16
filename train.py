@@ -240,11 +240,9 @@ def process_epoch(
 ):
     epoch_loss = 0
     for batch_idx, batch in enumerate(dataloader):
-        print(f"Batch index {batch_idx}", flush=True)
         if mode == "train":
             optimizer.zero_grad()
         # tnf_batch = batch_preprocessing_fn(batch)
-        print("Loss FN", flush=True)
         loss = loss_fn(model, batch)
         print(f"Loss: {loss}, {type(loss)}", flush=True)
         loss_np = loss.data.cpu().numpy()
@@ -289,7 +287,6 @@ for epoch in range(1, args.num_epochs + 1):
         batch_preprocessing_fn=None,
         log_interval=1,
     )
-    print("Post train loss", flush=True)
     test_loss[epoch - 1] = process_epoch(
         "test",
         epoch,
@@ -300,7 +297,6 @@ for epoch in range(1, args.num_epochs + 1):
         batch_preprocessing_fn=None,
         log_interval=1,
     )
-    print("Post test loss", flush=True)
     # remember best loss
     is_best = test_loss[epoch - 1] < best_test_loss
     best_test_loss = min(test_loss[epoch - 1], best_test_loss)
@@ -317,7 +313,6 @@ for epoch in range(1, args.num_epochs + 1):
         is_best,
         checkpoint_name,
     )
-    print("Post checkpoint", flush=True)
 
 print("Done!")
 
