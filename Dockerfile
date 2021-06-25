@@ -3,7 +3,7 @@ FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 # Set up pytho, pip, and pipenv.
 RUN apt-get update
 RUN apt-get -y install python3.7 python3-pip python3.7-dev
-RUN pip3 install pipenv
+RUN python3.7 -m pip install pipenv
 
 # Installing Python deps without a venv (not needed in container).
 WORKDIR /app
