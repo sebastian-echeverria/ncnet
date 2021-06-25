@@ -10,8 +10,6 @@ WORKDIR /app
 #COPY Pipfile /app
 #COPY Pipfile.lock /app
 #RUN pipenv install --system --deploy --ignore-pipfile
-#ENV LC_ALL=en_US.utf-8
-#ENV export LANG=en_US.utf-8
 #RUN pipenv lock --keep-outdated --requirements > requirements.txt
 COPY requirements.txt /app
 RUN python3.7 -m pip install -r requirements.txt
