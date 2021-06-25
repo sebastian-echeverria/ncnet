@@ -7,10 +7,12 @@ RUN pip3 install pipenv
 
 # Installing Python deps without a venv (not needed in container).
 WORKDIR /app
-COPY Pipfile /app
-COPY Pipfile.lock /app
+#COPY Pipfile /app
+#COPY Pipfile.lock /app
 #RUN pipenv install --system --deploy --ignore-pipfile
-RUN pipenv lock --keep-outdated --requirements > requirements.txt
+#ENV LC_ALL=en_US.utf-8
+#ENV export LANG=en_US.utf-8
+#RUN pipenv lock --keep-outdated --requirements > requirements.txt
 RUN pip3 install -r requirements.txt
 
 # Actual code.
