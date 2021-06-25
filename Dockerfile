@@ -14,7 +14,7 @@ WORKDIR /app
 #ENV export LANG=en_US.utf-8
 #RUN pipenv lock --keep-outdated --requirements > requirements.txt
 COPY requirements.txt /app
-RUN pip3 install -r requirements.txt
+RUN python3.7 -m pip install -r requirements.txt
 
 # Actual code.
 WORKDIR /app
