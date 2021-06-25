@@ -13,6 +13,7 @@ WORKDIR /app
 #ENV LC_ALL=en_US.utf-8
 #ENV export LANG=en_US.utf-8
 #RUN pipenv lock --keep-outdated --requirements > requirements.txt
+COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 
 # Actual code.
