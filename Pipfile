@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 numpy = "*"
 scipy = "*"
-matplotlib = "*"
+matplotlib = "3.3.4"
 torch = "==1.0.1"
 torchvision = "==0.2.2"
 scikit-image = "*"
