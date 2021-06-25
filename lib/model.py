@@ -281,8 +281,14 @@ class ImMatchNet(nn.Module):
     # used only for foward pass at eval and for training with strong supervision
     def forward(self, tnf_batch): 
         # feature extraction
-        feature_A = self.FeatureExtraction(tnf_batch['source_image'])
-        feature_B = self.FeatureExtraction(tnf_batch['target_image'])
+        source_image = tnf_batch['source_image']
+        if self.use_cuda:
+            source_image = source_image.cuda()
+        target_image = tnf_batch['target_image']
+        if self.use_cuda:
+            target_image = target_image.cuda()
+        feature_A = self.FeatureExtraction(source_image)
+        feature_B = self.FeatureExtraction(target_image)
         if self.half_precision:
             feature_A=feature_A.half()
             feature_B=feature_B.half()
