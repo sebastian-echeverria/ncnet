@@ -165,7 +165,7 @@ def weak_loss(model, batch, normalization="softmax", alpha=30):
     elif normalization == "l1":
         normalize = lambda x: x / (torch.sum(x, dim=1, keepdim=True) + 0.0001)
 
-    b = batch["source_image"].size(0)
+    b = batch["source_image"].size(0).cuda()
     # positive
     # corr4d = model({'source_image':batch['source_image'], 'target_image':batch['target_image']})
     print("Premodel", flush=True)
