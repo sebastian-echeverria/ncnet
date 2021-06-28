@@ -91,7 +91,7 @@ The exact dependencies needed are not explicitly stated in any of the repos. Som
  - Python 3.6 or 3.7 is required for the current Python libraries. 3.7 is currently used.
    
 In terms of Python packages, the Pipfile file takes care of the needed versions. However, some general notes below:
- - Torch version 1.0.0 (at least) is needed to support some methods used in model.py that are not in previous versions.
+ - Torch version 1.0.0 (at least) is needed to support some methods used in model.py that are not in previous versions. (Since the Mughal code was last modified on May/19, it can't have used Torch higher than 1.1).
  - Torchvision version has to be the appropriate one to match the Torch version according to this table: https://pypi.org/project/torchvision/
  - If changes are made to the Pipfile file, run `update_lock_reqs.sh` to update the Pipfile.lock an requirements.txt files.
 
