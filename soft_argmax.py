@@ -189,7 +189,7 @@ class SoftArgmax2D(torch.nn.Module):
 
         # compute x index (sum over y axis, produce with indices and then sum over x axis for the expectation)
         x_end_index = self.base_index + width * self.step_size
-        x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).cuda()
+        x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).cuda().float()
         sum = torch.sum(smax, 2)
         print(sum)
         print(type(sum))
