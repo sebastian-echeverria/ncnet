@@ -191,6 +191,10 @@ class SoftArgmax2D(torch.nn.Module):
         x_end_index = self.base_index + width * self.step_size
         x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).cuda()
         sum = torch.sum(smax, 2)
+        print(sum)
+        print(type(sum))
+        print(x_indices)
+        print(type(x_indices))
         mult = sum * x_indices
         x_coords = torch.sum(mult, 2)
 
