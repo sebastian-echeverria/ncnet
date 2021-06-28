@@ -169,7 +169,7 @@ def weak_loss(model, batch, normalization="softmax", alpha=30):
     # positive
     # corr4d = model({'source_image':batch['source_image'], 'target_image':batch['target_image']})
     print("Premodel", flush=True)
-    corr4d = model(batch.cuda())
+    corr4d = model(batch)
 
     batch_size = corr4d.size(0)
     feature_size = corr4d.size(2)
