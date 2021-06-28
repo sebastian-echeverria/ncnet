@@ -312,8 +312,8 @@ class ImMatchNet(nn.Module):
         nc_B_Avec = corr4d.view(batch_size, fs1 * fs2, fs3, fs4)  # [batch_idx,k_A,i_B,j_B]
 
         nc_B_Avec = torch.nn.functional.softmax(nc_B_Avec, dim=1)
-
-        
+        if self.use_cuda:
+            nc_B_Avec = nc_B_Avec.cuda()
         a1 = softarg2d(nc_B_Avec)
 
         
