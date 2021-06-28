@@ -357,7 +357,9 @@ class ImMatchNet(nn.Module):
 
         nc_A_Bvec = torch.nn.functional.softmax(nc_A_Bvec, dim=3)
         nc_A_Bvec = nc_A_Bvec.permute(0,3,1,2)
-        
+
+        if self.use_cuda:
+            nc_A_Bvec = nc_A_Bvec.cuda()
         b1 = softarg2d(nc_A_Bvec)
         
         B_vec = feature_B.view(feature_B.size(0), feature_B.size(1), -1).type(torch.cuda.FloatTensor)
