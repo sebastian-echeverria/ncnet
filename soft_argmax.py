@@ -186,12 +186,12 @@ class SoftArgmax2D(torch.nn.Module):
         windows = windows.view(batch_size, channels, height, width).cuda()
         smax = self._softmax_2d(x, self.softmax_temp) * windows
         smax = smax / torch.sum(smax.view(batch_size, channels, -1), dim=2).view(batch_size,channels,1,1)
-        smax = smax.cuda()
 
         # compute x index (sum over y axis, produce with indices and then sum over x axis for the expectation)
         x_end_index = self.base_index + width * self.step_size
         x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).cuda()
-        x_coords = torch.sum(torch.sum(smax, 2) * x_indices, 2)
+        mult = torch.sum(smax, 2) * x_indices
+        x_coords = torch.sum(mult, 2)
 
         # compute y index (sum over x axis, produce with indices and then sum over y axis for the expectation)
         y_end_index = self.base_index + height * self.step_size
