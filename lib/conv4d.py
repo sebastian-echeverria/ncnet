@@ -69,6 +69,14 @@ def conv4d(data, filters, bias=None, permute_filters=True, use_half=False):
             )
 
     output = output.permute(1, 2, 0, 3, 4, 5).contiguous()
+    print(f"Size DP: {(data_padded.element_size() * data_padded.nelement())/1024/1024} MB")
+    print(f"Size Filt: {(filters.element_size() * filters.nelement())/1024/1024} MB")
+    print(f"Size Padding: {(padding.element_size() * padding.nelement())/1024/1024} MB")
+
+    import sys
+    print(f"Storage Output: {(sys.getsizeof(output.storage()))/1024/1024} MB")
+    print(f"Storage DP: {(sys.getsizeof(data_padded.storage()))/1024/1024} MB")
+    print(f"Storage Filt: {(sys.getsizeof(filters.storage()))/1024/1024} MB")
     return output
 
 
