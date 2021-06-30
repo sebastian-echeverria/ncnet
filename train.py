@@ -28,7 +28,7 @@ if use_cuda:
     torch.cuda.manual_seed(1)
 np.random.seed(1)
 
-print('ImMatchNet training script')
+print('ImMatchNet training script', flush=True)
 
 # Argument parsing
 parser = argparse.ArgumentParser(description='Compute PF Pascal matches')
@@ -47,10 +47,10 @@ parser.add_argument('--fe_finetune_params',  type=int, default=0, help='number o
 
 
 args = parser.parse_args()
-print(args)
+print(args, flush=True)
 
 # Create model
-print('Creating CNN model...')
+print('Creating CNN model...', flush=True)
 model = ImMatchNet(use_cuda=use_cuda,
 				   checkpoint=args.checkpoint,
                    ncons_kernel_sizes=args.ncons_kernel_sizes,
@@ -62,12 +62,12 @@ if args.fe_finetune_params>0:
         for p in model.FeatureExtraction.model[-1][-(i+1)].parameters(): 
             p.requires_grad=True
 
-print('Trainable parameters:')
+print('Trainable parameters:', flush=True)
 for i,p in enumerate(filter(lambda p: p.requires_grad, model.parameters())): 
-    print(str(i+1)+": "+str(p.shape))
+    print(str(i+1)+": "+str(p.shape), flush=True)
     
 # Optimizer
-print('using Adam optimizer')
+print('using Adam optimizer', flush=True)
 optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
     
 cnn_image_size=(args.image_size,args.image_size)
@@ -102,7 +102,7 @@ dataloader_test = DataLoader(dataset_test, batch_size=args.batch_size,
 checkpoint_name = os.path.join(args.result_model_dir,
                                datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")+'_'+args.result_model_fn + '.pth.tar')
 
-print('Checkpoint name: '+checkpoint_name)    
+print('Checkpoint name: '+checkpoint_name, flush=True)
     
 # Train
 best_test_loss = float("inf")
@@ -165,8 +165,8 @@ def process_epoch(mode,epoch,model,loss_fn,optimizer,dataloader,batch_preprocess
             optimizer.zero_grad()
         tnf_batch = batch_preprocessing_fn(batch)
         loss = loss_fn(model,tnf_batch)
-        loss_np = loss.data.cpu().numpy()[0]
-        #loss_np = loss.data.cpu().numpy()
+        #loss_np = loss.data.cpu().numpy()[0]
+        loss_np = loss.data.cpu().numpy()
         epoch_loss += loss_np
         if mode=='train':
             loss.backward()
@@ -176,15 +176,15 @@ def process_epoch(mode,epoch,model,loss_fn,optimizer,dataloader,batch_preprocess
         if batch_idx % log_interval == 0:
             print(mode.capitalize()+' Epoch: {} [{}/{} ({:.0f}%)]\t\tLoss: {:.6f}'.format(
                 epoch, batch_idx , len(dataloader),
-                100. * batch_idx / len(dataloader), loss_np))
+                100. * batch_idx / len(dataloader), loss_np), flush=True)
     epoch_loss /= len(dataloader)
-    print(mode.capitalize()+' set: Average loss: {:.4f}'.format(epoch_loss))
+    print(mode.capitalize()+' set: Average loss: {:.4f}'.format(epoch_loss), flush=True)
     return epoch_loss
 
 train_loss = np.zeros(args.num_epochs)
 test_loss = np.zeros(args.num_epochs)
 
-print('Starting training...')
+print('Starting training...', flush=True)
 
 model.FeatureExtraction.eval()
 
