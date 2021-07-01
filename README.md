@@ -110,3 +110,13 @@ To run the default container:
 
 TODO: Indicate parameters used to run different things in container (other than the default training code).
 
+## Mughal Paper Changes
+
+This version is integrating the model from the Mughal paper, available here: https://github.com/m-hamza-mughal/Aerial-Template-Matching . Major changes in this fork:
+- The `lib/model.py` file from the Mughal repo has been used to overwrite the default one.
+- The `soft_argmax.py` file from this repo (https://github.com/MWPainter/cvpr2019/blob/master/stitched/soft_argmax.py#L117) has been added, as requested in the Mughal repo.
+- Some code fixes have been required on the two files above to make the code work.
+
+Some general notes Python dependencies notes below:
+- Torch version 1.0.0 (at least) is needed to support some methods used in model.py that are not in previous versions. (Since the Mughal code was last modified on May/19, it can't have used Torch higher than 1.1).
+- Torchvision version has to be the appropriate one to match the Torch version according to this table: https://pypi.org/project/torchvision/
