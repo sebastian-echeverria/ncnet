@@ -180,7 +180,7 @@ class SoftArgmax2D(torch.nn.Module):
         # Compute windowed softmax
         # Compute windows using a batch_size of "batch_size * channels"
         batch_size, channels, height, width = x.size()
-        argmax = torch.argmax(x.view(batch_size * channels, -1), dim=1)
+        argmax = torch.argmax(x.contiguous().view(batch_size * channels, -1), dim=1)
         argmax_x, argmax_y = torch.remainder(argmax, width).float(), torch.floor(torch.div(argmax.float(), float(width)))
         windows = _make_radial_window(width, height, argmax_x, argmax_y, self.window_fn, self.window_width)
         windows = windows.view(batch_size, channels, height, width).cuda()
