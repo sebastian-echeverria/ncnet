@@ -85,10 +85,10 @@ This fork of the repo is dockerizing the NCnet project. The main changes include
 - Minor fixes have been required to make the code work with exact dependencies.
 
 The exact dependencies needed are not explicitly stated in any of the repos. Some major dependency notes follow. Note, however, that the containerized version of this system handles most of the versioning issues.
-- CUDA is required for this model (and apparently also for the base ncnet). There is a memory leak in PyTorch which eats up all RAM if a CPU is used. Thus, this can only run on a NVIDIA GPU enabled computer, with CUDA installed. (CUDA v9.0 is recommended).
+- CUDA is required for ncnet to work. There is a memory leak in PyTorch which eats up all RAM if a CPU is used. Thus, this can only run on an NVIDIA GPU enabled computer, with CUDA installed. (CUDA v9.0 is recommended).
 - Python 3.6 or 3.7 is required for the current Python libraries. 3.7 is currently used.
 
-In terms of Python packages, the Pipfile file takes care of the needed versions. If changes are made to the Pipfile file, run `update_lock_reqs.sh` to update the Pipfile.lock an requirements.txt files.
+In terms of Python packages, the Pipfile file takes care of the needed versions. If changes are made to the Pipfile file, run `update_lock_reqs.sh` to update the Pipfile.lock and requirements.txt files.
 
 ### Container Version Instructions
 
