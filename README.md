@@ -105,7 +105,7 @@ To run the default container:
 
 TODO: Indicate parameters used to run different things in container (other than the default training code).
 
-## Mughal Paper Changes
+### Mughal Paper Changes
 
 This version is integrating the model from the Mughal paper, available here: https://github.com/m-hamza-mughal/Aerial-Template-Matching . Major changes in this fork:
 - The `lib/model.py` file from the Mughal repo has been used to overwrite the default one.
