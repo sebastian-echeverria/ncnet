@@ -189,12 +189,12 @@ class SoftArgmax2D(torch.nn.Module):
 
         # compute x index (sum over y axis, produce with indices and then sum over x axis for the expectation)
         x_end_index = self.base_index + width * self.step_size
-        x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).cuda()
+        x_indices = torch.arange(start=self.base_index, end=x_end_index, step=self.step_size).float().cuda()
         x_coords = torch.sum(torch.sum(smax, 2) * x_indices, 2)
 
         # compute y index (sum over x axis, produce with indices and then sum over y axis for the expectation)
         y_end_index = self.base_index + height * self.step_size
-        y_indices = torch.arange(start=self.base_index, end=y_end_index, step=self.step_size).cuda()
+        y_indices = torch.arange(start=self.base_index, end=y_end_index, step=self.step_size).float().cuda()
         y_coords = torch.sum(torch.sum(smax, 3) * y_indices, 2)
 
         # For debugging (testing if it's actually like the argmax?)
