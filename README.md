@@ -115,3 +115,19 @@ This version is integrating the model from the Mughal paper, available here: htt
 Some general notes Python dependencies notes below:
 - Torch version 1.0.0 (at least) is needed to support some methods used in model.py that are not in previous versions. (Since the Mughal code was last modified on May/19, it can't have used Torch higher than 1.1).
 - Torchvision version has to be the appropriate one to match the Torch version according to this table: https://pypi.org/project/torchvision/
+
+#### Mughal Dataset
+The dataset available at https://github.com/m-hamza-mughal/aerial-template-matching-dataset contains annotations for the different images in a csv file. However, the format is confusing since 1) it is not self-documented, nor documented in detail in the paper, and 2) there is no code available that loads this dataset. However, the following can be understood from the paper, images, repo and csv file:
+
+- The dataset contains 2052 images from 3 different areas, and 3 orthomosaics, one per area.
+    - Images 1 to 1200 are from NUST area.
+    - Images 1201 to 1680 are from DHA area.
+    - Images 1681 to 2052 are from the GujarKhan area.
+- The labels.csv file has 2052 lines; thus, each line seems to correspond to one image.
+- The information in the labels.csv file is called "annotations" in the paper.
+- Each image has at most 16 associated point-to-point correspondences between that image and the corresponding orthomosaic.
+- Each correspondence has 2 points, and each point has 2 coordinates; thus, each correspondence has 4 values (which we will assume are ximage, yimage, xmosaic, ymosaic).
+- Thus, each line in the dataset corresponds to a series of correspondences for that image and its mosaic, in groups of 4 numbers each (in fact, the number of columns for every row seems to be a multiple of 4).
+    - However, even though the paper says that each image has at most 16 correspondences, there are lines in the file with up to 192 (768 colunms) correspondences.
+- The range of values for each coordinate go between 1 and 893. It is not clear what each point means.. neither pixels nor lat/long coordinates make sense.
+- It is also not clear why some images have integer points, while others have decimal ones. It may come from how they were hand labelled.
