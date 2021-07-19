@@ -131,3 +131,5 @@ The dataset available at https://github.com/m-hamza-mughal/aerial-template-match
     - However, even though the paper says that each image has at most 16 correspondences, there are lines in the file with up to 192 (768 colunms) correspondences.
 - The range of values for each coordinate go between 1 and 893. It is not clear what each point means.. neither pixels nor lat/long coordinates make sense.
 - It is also not clear why some images have integer points, while others have decimal ones. It may come from how they were hand labelled.
+- Finally, it is not clear how the images are GPS-tagged. The JPEG images do not have metadata for lat/long.
+- The TIFF orthomosaic images have embedded GPS information in the WGS 84 system. The gdalinfo tool (installable like this: https://mothergeo-py.readthedocs.io/en/latest/development/how-to/gdal-ubuntu-pkg.html#install-gdal-ogr) can be used to get the files GPS information. Using the Python gdal library, GPS information could be calculated for each pixel if needed.
