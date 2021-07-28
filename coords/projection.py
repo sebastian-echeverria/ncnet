@@ -2,6 +2,38 @@ import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
 
+import gdal
+from osgeo import osr
+
+
+class CoordinateConversor():
+    """Converts coordinates from a GeoTIFF base image."""
+
+    def __init__(self, mosaic_path):
+        mosaic = gdal.Open(mosaic_path)
+        self.c, self.a, self.b, self.f, self.d, self.e = mosaic.GetGeoTransform()
+
+        srs = osr.SpatialReference()
+        srs.ImportFromWkt(mosaic.GetProjection())
+        srsLatLong = srs.CloneGeogCS()
+        self.coord_transform = osr.CoordinateTransformation(srs, srsLatLong)
+
+    def pixel_to_coord(self, col, row):
+        """Returns global coordinates to pixel center using base-0 raster index"""
+        xp = self.a * col + self.b * row + self.c
+        yp = self.d * col + self.e * row + self.f
+        coords = self.coord_transform.TransformPoint(xp, yp)
+        return coords
+
+    @staticmethod
+    def calculate_centroid(points):
+        """Calculates the centroid of a given set of points."""
+        points = np.int32(points)
+        M = cv.moments(points)
+        cx = int(M['m10']/M['m00'])
+        cy = int(M['m01']/M['m00'])
+        return cx, cy
+
 
 def find_matching_points(img1, img2):
     """Returns two sets of matching points between the two given images."""
@@ -66,7 +98,8 @@ def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask):
 
 
 def main():
-    mosaic = cv.imread('../datasets/mughal/Dataset/orthomosaic/nust.tif', 0)
+    mosaic_path = '../datasets/mughal/Dataset/orthomosaic/nust.tif'
+    mosaic = cv.imread(mosaic_path, 0)
     template = cv.imread('../datasets/mughal/Dataset/data/Image11.jpg', 0)
     src_pts = np.array([[70.18304443, 147.3605804],
                [100.9704361, 190.8684692],
@@ -108,7 +141,7 @@ def main():
     kp1 = None
     kp2 = None
     good_matches = None
-    mode = "read"
+    mode = "detect"
     if mode == "detect":
         try:
             src_pts, dst_pts, kp1, kp2, good_matches = find_matching_points(template, mosaic)
@@ -117,7 +150,15 @@ def main():
             exit(0)
 
     dest_loc, matchesMask = project_first_in_second(template, src_pts, dst_pts)
-    print(dest_loc)
+    print(f"Projection: {dest_loc}")
+
+    centroid = CoordinateConversor.calculate_centroid(dest_loc)
+    print(f"Center: {centroid}")
+
+    conversor = CoordinateConversor(mosaic_path)
+    gps_coords = conversor.pixel_to_coord(centroid[0], centroid[1])
+    print(f"GPS coords: {gps_coords}")
+
     show_matches(template, mosaic, dest_loc, kp1, kp2, good_matches, matchesMask)
 
 
