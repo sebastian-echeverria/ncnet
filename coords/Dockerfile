@@ -4,8 +4,6 @@ ENV PYTHONUNBUFFERED 1
 
 # Install OpenCV and Gdal packages.
 RUN apt-get update
-RUN apt-get install software-properties-common
-RUN add-apt-repository ppa:ubuntugis/ppa && apt-get update
 RUN apt-get install -y libsm6 libxext6
 RUN apt-get install -y gdal-bin
 #binutils libproj-dev
