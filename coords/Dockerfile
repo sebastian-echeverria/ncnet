@@ -1,10 +1,10 @@
-FROM python:3.7
+FROM python:3.7-stretch
 
 ENV PYTHONUNBUFFERED 1
 
 # Install OpenCV and Gdal packages.
 RUN apt-get update
-RUN apt-get install -y libsm6 libxext6
+RUN apt-get install -y ffmpeg libsm6 libxext6
 RUN apt-get install -y libgdal-dev gdal-bin
 ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
