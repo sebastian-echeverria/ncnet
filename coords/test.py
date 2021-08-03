@@ -9,7 +9,8 @@ from pix2coord import points_to_coordinates
 def main():
     mosaic_path = '../datasets/mughal/Dataset/orthomosaic/nust.tif'
     mosaic = cv.imread(mosaic_path, 0)
-    template = cv.imread('../datasets/mughal/Dataset/data/Image11.jpg', 0)
+    template_path = '../datasets/mughal/Dataset/data/Image11.jpg'
+    template = cv.imread(template_path, 0)
     src_pts = np.array([[70.18304443, 147.3605804],
                         [100.9704361, 190.8684692],
                         [284.1752625, 26.5521946],
@@ -59,7 +60,7 @@ def main():
             exit(0)
 
     # Get GPS from set of matching points.
-    gps_coords, projected_corners, matchesMask = points_to_coordinates(template, mosaic_path, src_pts, dst_pts)
+    gps_coords, projected_corners, matchesMask = points_to_coordinates(template_path, mosaic_path, src_pts, dst_pts)
 
     # Show matches, as well as KPs
     show_matches(template, mosaic, projected_corners, kp1, kp2, good_matches, matchesMask, "images/matching.png")

@@ -47,9 +47,10 @@ def project_first_in_second(img1, src_pts, dst_pts):
     return dst, matchesMask
 
 
-def points_to_coordinates(template, mosaic_path, src_pts, dst_pts):
+def points_to_coordinates(template_path, mosaic_path, src_pts, dst_pts):
     """Gets two images and two sets of matching points, and returns the projected corners of the image, and the GPS
     coordinates of its centroid."""
+    template = cv.imread(template_path, 0)
     projected_corners, matchesMask = project_first_in_second(template, src_pts, dst_pts)
     print(f"Projection: {projected_corners}")
 
