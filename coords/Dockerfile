@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 # Copy app and set entry.
 WORKDIR /app
 COPY *.py /app/
-ENTRYPOINT ["python", "projection.py"]
+ENTRYPOINT ["python", "test.py"]
