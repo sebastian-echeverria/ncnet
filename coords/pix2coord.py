@@ -46,3 +46,18 @@ def project_first_in_second(img1, src_pts, dst_pts):
 
     return dst, matchesMask
 
+
+def points_to_coordinates(template, mosaic_path, src_pts, dst_pts):
+    """Gets two images and two sets of matching points, and returns the projected corners of the image, and the GPS
+    coordinates of its centroid."""
+    projected_corners, matchesMask = project_first_in_second(template, src_pts, dst_pts)
+    print(f"Projection: {projected_corners}")
+
+    centroid = CoordinateConversor.calculate_centroid(projected_corners)
+    print(f"Center: {centroid}")
+
+    conversor = CoordinateConversor(mosaic_path)
+    gps_coords = conversor.pixel_to_coord(centroid[0], centroid[1])
+    print(f"GPS coords: {gps_coords}")
+
+    return gps_coords, projected_corners, matchesMask

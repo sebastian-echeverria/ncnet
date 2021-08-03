@@ -3,8 +3,7 @@ import cv2 as cv
 
 from sift import find_matching_points
 from sift import show_matches
-from pix2coord import project_first_in_second
-from pix2coord import CoordinateConversor
+from pix2coord import points_to_coordinates
 
 
 def main():
@@ -59,17 +58,11 @@ def main():
             print(f"Error: {str(ex)}")
             exit(0)
 
-    dest_loc, matchesMask = project_first_in_second(template, src_pts, dst_pts)
-    print(f"Projection: {dest_loc}")
+    # Get GPS from set of matching points.
+    gps_coords, projected_corners, matchesMask = points_to_coordinates(template, mosaic_path, src_pts, dst_pts)
 
-    centroid = CoordinateConversor.calculate_centroid(dest_loc)
-    print(f"Center: {centroid}")
-
-    conversor = CoordinateConversor(mosaic_path)
-    gps_coords = conversor.pixel_to_coord(centroid[0], centroid[1])
-    print(f"GPS coords: {gps_coords}")
-
-    show_matches(template, mosaic, dest_loc, kp1, kp2, good_matches, matchesMask, "images/matching.png")
+    # Show matches, as well as KPs
+    show_matches(template, mosaic, projected_corners, kp1, kp2, good_matches, matchesMask, "images/matching.png")
 
 
 if __name__ == '__main__':
