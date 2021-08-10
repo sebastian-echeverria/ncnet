@@ -7,6 +7,7 @@ This code uses a list of points that correspond to matching points between two i
 The test.py code file runs a simple test where it can either use sift to find matches and then show the results, or use some hardcoded test points to test this out.
 
 Dependencies:
+ - test.py: Mughal dataset. Download it from datasets/mughal, using download.sh
  - Non-dockerized:
     - OpenCV
     - GDAL
