@@ -28,9 +28,11 @@ def find_matching_points(img1, img2):
         if m.distance < 0.7 * n.distance:
             good_matches.append(m)
 
-    MIN_MATCH_COUNT = 10
+    MIN_MATCH_COUNT = 8
     if len(good_matches) < MIN_MATCH_COUNT:
         raise Exception("Not enough matches are found - {}/{}".format(len(good_matches), MIN_MATCH_COUNT))
+    else:
+        print(f"Found {len(good_matches)} matches")
 
     src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
@@ -38,7 +40,7 @@ def find_matching_points(img1, img2):
     return src_pts, dst_pts, kp1, kp2, good_matches
 
 
-def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file):
+def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file, block_plot=False):
     # Draw the projection of the first image into the second.
     img3 = cv.polylines(img2, [np.int32(dst)], True, 0, 3, cv.LINE_AA)
 
@@ -50,10 +52,15 @@ def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file):
     if kp1 is not None and kp2 is not None and good is not None:
         img3 = cv.drawMatches(img1, kp1, img3, kp2, good, None, **draw_params)
 
+    plt.clf()
     plt.imshow(img3, 'gray')
 
     # Save to file
     Path(os.path.dirname(output_file)).mkdir(parents=True, exist_ok=True)
     plt.savefig(output_file)
 
-    plt.show()
+    if block_plot:
+        plt.show()
+    else:
+        plt.draw()
+        plt.pause(0.01)

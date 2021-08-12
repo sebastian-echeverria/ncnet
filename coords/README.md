@@ -17,7 +17,7 @@ Dependencies:
     - Docker
 
 To run this:
- - Non-dockerized: `python test.py`
+ - Non-dockerized: `python3 test.py`
  - Dockerized version:
     - `bash build_container.sh`
     - `bash run_container.sh`
