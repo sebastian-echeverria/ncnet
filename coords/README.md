@@ -8,7 +8,6 @@ This code uses a list of points that correspond to matching points between two i
 The test.py code file runs a simple test where it can either use sift to find matches and then show the results, or use some hardcoded test points to test this out.
 
 Dependencies:
- - test.py: Mughal dataset. Download it from datasets/mughal, using download.sh
  - Non-dockerized:
     - OpenCV
     - GDAL
@@ -16,9 +15,10 @@ Dependencies:
         - `pip install -r requirements.txt`
  - Dockerized:
     - Docker
+ - For the Mughal example (run_mughal.sh): Mughal dataset. Download it from datasets/mughal, using download.sh
 
 To run this:
- - Non-dockerized: `python3 test.py`
+ - Non-dockerized: `python3 test.py <mosaic_path> <images_folder>`
  - Dockerized version:
     - `bash build_container.sh`
-    - `bash run_container.sh`
+    - `bash run_container.sh <mosaic_path> <images_folder>`
