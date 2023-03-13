@@ -42,7 +42,10 @@ def find_matching_points(img1, img2):
 
 def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file, block_plot=False, out_color='gray'):
     # Draw the projection of the first image into the second.
-    img3 = cv.polylines(img2, [np.int32(dst)], True, 0, 3, cv.LINE_AA)
+    poly_color = 0
+    if out_color != 'gray':
+        poly_color = (255, 0, 0)
+    img3 = cv.polylines(img2, [np.int32(dst)], True, poly_color, 3, cv.LINE_AA)
 
     # Add the keypoint matches between the images.
     draw_params = dict(matchColor=(0, 255, 0),   # draw matches in green color
