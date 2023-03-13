@@ -1,3 +1,4 @@
+@@ -1,23 +0,0 @@
 # Projection and Pixel to Coordinates
 
 This code uses a list of points that correspond to matching points between two images (small and orthomosaic) as an input, and

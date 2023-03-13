@@ -13,6 +13,7 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 RUN pip install --upgrade setuptools pip
 WORKDIR /app
 COPY requirements.txt /app
+RUN pip config set global.trusted-host "pypi.org pypi.python.org files.pythonhosted.org"
 RUN pip install -r requirements.txt
 
 # Copy app and set entry.

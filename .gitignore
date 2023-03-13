@@ -9,3 +9,5 @@ __MACOSX/
 .idea/
 datasets/mughal/Dataset/
 *.png
+*.jpg
+*.tif
