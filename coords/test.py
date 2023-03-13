@@ -1,3 +1,7 @@
+import os
+import os.path
+import sys
+
 import numpy as np
 import cv2 as cv
 
@@ -7,8 +11,8 @@ from pix2coord import points_to_coordinates
 
 
 def main():
-    mosaic_path = '../datasets/mughal/Dataset/orthomosaic/nust.tif'
-    template_path_prefix = '../datasets/mughal/Dataset/data/Image'
+    mosaic_path = sys.argv[1]
+    image_folder = sys.argv[2]
 
     src_pts = []
     dst_pts = []
@@ -17,14 +21,14 @@ def main():
     good_matches = None
 
     mode = "detect"
-    total_images = 1
-    starting = 11
     show_plot = True
-    block_plot = True
+    block_plot = False
 
     num_images_matched = 0
-    for i in range(starting, starting+total_images):
-        template_path = template_path_prefix + str(i) + ".jpg"
+    i = 0
+    for image in sorted(os.listdir(image_folder)):
+        i = i + 1
+        template_path = os.path.join(image_folder, image)
         print(f"Finding image: {template_path}")
         print(f"Matched so far: {num_images_matched}/{i} ({num_images_matched * 100 / i}%)")
         template = cv.imread(template_path, 0)
@@ -43,7 +47,7 @@ def main():
 
         # Show matches, as well as KPs
         if show_plot:
-            show_matches(template, mosaic, projected_corners, kp1, kp2, good_matches, matchesMask, "images/matching.png", block_plot)
+            show_matches(template, mosaic, projected_corners, kp1, kp2, good_matches, matchesMask, "images/matching" + str(i) + ".png", block_plot)
 
     print(f"Stats: matched {num_images_matched} out of {i} ({num_images_matched * 100 / i}%)")
 
