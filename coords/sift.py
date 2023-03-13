@@ -40,7 +40,7 @@ def find_matching_points(img1, img2):
     return src_pts, dst_pts, kp1, kp2, good_matches
 
 
-def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file, block_plot=False):
+def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file, block_plot=False, out_color='gray'):
     # Draw the projection of the first image into the second.
     img3 = cv.polylines(img2, [np.int32(dst)], True, 0, 3, cv.LINE_AA)
 
@@ -53,11 +53,11 @@ def show_matches(img1, img2, dst, kp1, kp2, good, matchesMask, output_file, bloc
         img3 = cv.drawMatches(img1, kp1, img3, kp2, good, None, **draw_params)
 
     plt.clf()
-    plt.imshow(img3, 'gray')
+    plt.imshow(img3, out_color)
 
     # Save to file
     Path(os.path.dirname(output_file)).mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_file)
+    plt.savefig(output_file, dpi=300)
 
     if block_plot:
         plt.show()

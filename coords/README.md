@@ -18,7 +18,8 @@ Dependencies:
  - For the Mughal example (run_mughal.sh): Mughal dataset. Download it from datasets/mughal, using download.sh
 
 To run this:
- - Non-dockerized: `python3 test.py <mosaic_path> <images_folder>`
+ - Non-dockerized: `python3 test.py <mosaic_path> <images_folder> [color]`
  - Dockerized version:
     - `bash build_container.sh`
-    - `bash run_container.sh <mosaic_path> <images_folder>`
+    - `bash run_container.sh <mosaic_path> <images_folder> [color]`
+- If present, optional "color" keyword at the end will process and output images in color.
